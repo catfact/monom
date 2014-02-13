@@ -1,3 +1,14 @@
+/*
+
+for information about monome devices:
+monome.org
+
+written by:
+raja das
+https://github.com/Karaokaze
+
+*/
+
 MonoM {
 
     classvar seroscnet, discovery, <>rows, <>columns, <>portlst;
