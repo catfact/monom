@@ -7,20 +7,21 @@ Arc : MonoM {
         ^super.new.initArc(prefix, rot);
     }
 
-    initArc { | prefix_, rot_ |
+    initArc { | your_prefix, your_rotation |
 
-        prefix = prefix_;
-        rot = rot_;
+        prefix = your_prefix;
+        rot = your_rotation;
 
         case
         { rot == 0 } { scaleFactor = 0 }
         { rot == 90 } { scaleFactor = 16 }
         { rot == 180 } { scaleFactor = 32 }
         { rot == 270 } { scaleFactor = 48 }
-        { (rot != 0) or: (rot != 90) or: (rot != 180) or: (rot != 270) }
+        { ((rot == 0) or: (rot == 90) or: (rot == 180) or: (rot == 270)).not }
         {
-            "Did not choose valid rotation. Using default: 180˚".warn;
+            "Did not choose valid rotation. Using default: 0".warn;
             scaleFactor = 0;
+            rot = 0;
         };
 
     }
@@ -68,6 +69,7 @@ Arc : MonoM {
 
             "Did not choose valid rotation (0, 90, 180, 270). Using default: 0.".warn;
             scaleFactor = 0;
+            rot = 0;
         };
 
         // flash one LED indicating north position
