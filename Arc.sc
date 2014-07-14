@@ -1,3 +1,18 @@
+/*
+
+for information about monome devices:
+monome.org
+
+base class written by:
+raja das
+https://github.com/Karaokaze
+
+arc class written by:
+joseph rangel
+https://github.com/nthhisst
+
+*/
+
 Arc : MonoM {
 
     var scaleFactor;
