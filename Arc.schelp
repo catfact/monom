@@ -1,0 +1,80 @@
+TITLE:: Arc
+summary:: Interface for monome arc
+categories:: Monome
+related:: Classes/ArcRotary, Classes/ArcEncoder, Classes/MonoM
+
+DESCRIPTION::
+Communication and management for monome serial/OSC arc controllers. For more information on monome see http://monome.org. For details on the serialosc protocol used with arc devices see http://monome.org/docs/tech:osc.
+
+CLASSMETHODS::
+
+METHOD:: new
+allocates a new arc object
+
+ARGUMENT:: prefix
+message prefix to communicate with serialosc
+
+ARGUMENT:: rot
+cable orientation: left = 0˚, down = 90˚, right = 180˚, up = 270˚
+
+
+INSTANCEMETHODS::
+
+private::initArc
+
+METHOD:: ringset
+set led x (0-63) on encoder n (0-1 or 0-3) to level l (0-15)
+
+ARGUMENT:: enc
+nth knob
+
+ARGUMENT:: led
+nth led from 0 to 63
+
+ARGUMENT:: lev
+led intensity from 0-15
+
+METHOD:: ringall
+set all leds on encoder n (0-1 or 0-3) to level l (0-15)
+
+ARGUMENT:: enc
+nth knob
+
+ARGUMENT:: lev
+led intensity from 0-15
+
+METHOD:: ringmap
+set all leds on encoder n (0-1 or 0-3) to 64 member array l[64]
+
+ARGUMENT:: enc
+nth knob
+
+ARGUMENT:: larr
+64 length array
+
+METHOD:: ringrange
+set leds on encoder n (0-1 or 0-3) between (inclusive) x1 and x3 to level l (0-15). direction of set is always clockwise, with wrapping.
+
+ARGUMENT:: enc
+nth knob
+
+ARGUMENT:: led1
+led x1
+
+ARGUMENT:: led2
+led x3
+
+ARGUMENT:: lev
+led intensity from 0-15
+
+METHOD:: darkness
+all leds are turned off and osc communication is disconnected
+
+SUBSECTION::Accessor Methods
+METHOD:: rot
+
+subsection::EXAMPLES
+
+code::
+??
+::

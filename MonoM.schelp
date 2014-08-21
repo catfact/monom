@@ -1,0 +1,320 @@
+TITLE:: MonoM
+summary:: Inteface for monome grids
+categories:: Monome
+related:: Classes/Arc, Classes/ArcEncoder, Classes/ArcRotary
+
+DESCRIPTION::
+Communication and management for monome serial/OSC grid controllers. For more information on monome see http://monome.org. For details on the serialosc protocol used with grid devices see http://monome.org/docs/tech:osc.
+
+NOTE:: January 2011 devices only support four intensity levels (off + 3 brightness levels). The value passed in methods prefixed "lev" will be “rounded down” to the lowest available intensity as below:
+
+TABLE::
+## 0-3 || off
+## 4-7 || low intensity
+## 8-11 || medium intensity
+## 12-15 || high intensity ::
+::
+
+CLASSMETHODS::
+
+METHOD:: new
+allocate MonoM object
+
+ARGUMENT:: prefix
+message prefix to communicate with serialosc
+
+ARGUMENT:: rot
+cable orientation: left = 0˚, down = 90˚, right = 180˚, up = 270˚
+
+PRIVATE:: portlst
+
+PRIVATE:: rows
+
+PRIVATE:: columns
+
+PRIVATE:: initClass
+
+INSTANCEMETHODS::
+
+PRIVATE:: init
+
+METHOD:: ledset
+set an individual led on or off
+
+ARGUMENT:: col
+column or y in cartesian coordinates
+
+ARGUMENT:: row
+row or x in cartesian coordinates
+
+ARGUMENT:: noff
+on or off: 0-1
+
+METHOD:: levset
+set an individual led to a variable brightness
+
+ARGUMENT:: col
+column or y in cartesian coordinates
+
+ARGUMENT:: row
+row or x in cartesian coordinates
+
+ARGUMENT:: lev
+led intensity 0-15
+
+METHOD:: ledall
+set all leds on or off
+
+ARGUMENT:: noff
+0: off or 1: on
+
+METHOD:: levall
+set all leds to a variable brightness
+
+ARGUMENT:: lev
+intensity level 0-15
+
+METHOD:: ledrow
+set a row in a quad in a single message
+
+ARGUMENT:: exoff
+x offset
+
+ARGUMENT:: why
+y offset
+
+ARGUMENT:: bit1
+first byte
+
+ARGUMENT:: bit2
+second byte
+
+DISCUSSION::
+Each number in the list is a bitmask of the buttons in a row, one number in the list for each row being updated.
+
+Given some nth row within the scope of a monome grid, if we take some base 10 integer, e.g 15, our binary equivalent is 00001111 (8 bits or 1 byte).
+When a message is sent via ledrow, the nth row will light in the order of least significant bit to most significant bit horizontally.
+
+Using no offsets, using 15 as the byte1 argument yields the following results (on a 64 grid):
+
+TABLE::
+## 1 || 1 || 1 || 1 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+::
+
+code::
+	// make sure server is booted before execution
+	~sixtyFour = MonoM("/sixtyFour", 90);
+	~sixtyFour.useDevice(0); // be sure to choose the proper index number
+	// device list is posted in the console on boot or it may be called
+	// with ~yourMonoMObject.deviceList()
+
+	~twoFiftySix = MonoM("/twoFiftySix", 90);
+	~twoFiftySix.useDevice(1);
+
+	~sixtyFour.ledrow(0, 0, 15);
+
+	when considering wider resolution grids, two bytes (32 bits) are used instead of a one byte
+	message (16 bits)
+	*/
+	~twoFiftySix.ledrow(0, 0, 255, 255);
+	~twoFiftySix.ledrow(8, 5, 255);
+
+::
+
+NOTE:: Offsets must be mutliples of 8. Offsets for monome 64 should always be zero.
+::
+
+METHOD:: ledcol
+Set a column in a quad in a single message.
+
+ARGUMENT:: ex
+x offset
+
+ARGUMENT:: whyoff
+y offset
+
+ARGUMENT:: bit1
+first byte
+
+ARGUMENT:: bit2
+second byte
+
+DISCUSSION::
+Each number in the list is a bitmask of the buttons in a column, one number in the list for each row being updated.
+
+Given some nth column within the scope of a monome grid, if we take some base 10 integer, e.g 242, our binary equivalent is 11110010.
+When a message is sent via ledcol, the nth column will light vertically ascending from most significant bit to least significant bit.
+
+TABLE::
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 1 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 0 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 1 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 1 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 1 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+## 1 || 0 || 0 || 0 || 0 || 0 || 0 || 0
+::
+
+CODE::
+	// make sure server is booted before execution
+	~grid = MonoM("/sixtyFour", 90);
+	~grid.useDevice(0); // be sure to choose the proper index number
+
+	// example above
+	~grid.ledcol(0, 0, 242);
+::
+
+NOTE:: Offsets must be mutliples of 8. Offsets for monome64 should always be zero.
+::
+
+METHOD:: levrow
+Set a row in a quad in a single message with variable brightness.
+
+ARGUMENT:: exoff
+x offset
+
+ARGUMENT:: why
+y offset
+
+ARGUMENT:: larr
+16 length integer array of values between 0 and 15
+
+CODE::
+(
+	~grid = MonoM.new("/grid", 0);
+    ~grid.useDevice(0);
+
+	// row 2 is lit with variable brightness
+	~grid.levrow(0, 2, [ 8, 8, 15, 2, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 ]);
+)
+::
+
+METHOD:: levcol
+Set a column in a quad in a single message with variable brightness.
+
+ARGUMENT:: ex
+x offset
+
+ARGUMENT:: whyoff
+y offset
+
+ARGUMENT:: larr
+16 length integer array of values between 0 and 15
+
+CODE::
+(
+	~grid = MonoM.new("/grid", 0);
+    ~grid.useDevice(0);
+
+	// row 2 is lit with variable brightness
+	~grid.levcol(3, 0, [ 8, 8, 15, 2, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 ]);
+)
+::
+
+METHOD:: ledmap
+set a quad (8×8, 64 buttons) in a single message
+
+ARGUMENT:: exoff
+x offset
+
+ARGUMENT:: whyoff
+y offset
+
+ARGUMENT:: larr
+64 length array
+
+DISCUSSION::
+Each number in the list is a bitmask of the buttons in a row, one number in the list for each row. The message will fail if the list doesn't have 8 entries plus offsets.
+
+CODE::
+	// make sure server is booted before execution
+	~grid = MonoM("/grid", 90);
+	~grid.useDevice(0);
+
+	~grid.ledmap(0, 0, [4, 4, 4, 4, 8, 8, 8, 8]);
+	~grid.ledmap(0, 0, [254, 253, 125, 247, 239, 36, 191, 4]);
+::
+
+NOTE:: Offsets must be multiples of 8.
+::
+
+METHOD:: levmap
+set a quad (8×8, 64 buttons) in a single message with variable brightness
+
+ARGUMENT:: exoff
+x offset
+
+ARGUMENT:: whyoff
+y offset
+
+ARGUMENT:: larr
+64 length array
+
+METHOD:: printOn
+Post as stream
+
+ARGUMENT:: stream
+
+METHOD:: usePort
+use a specific port for device communication
+
+ARGUMENT:: portnum
+
+METHOD:: intensity
+global intensity for entire grid
+
+ARGUMENT:: shitisintensyo
+intensitity level 0-15
+
+METHOD:: useDevice
+choose which device to use in the device list
+
+ARGUMENT:: devicenum
+device list index, begins at 0
+
+METHOD:: tiltnoff
+set active state of tilt sensor n to s
+
+ARGUMENT:: sens
+(describe argument here)
+
+ARGUMENT:: noff
+0 or 1
+
+METHOD:: darkness
+all leds are turned off and osc communication is disconnected
+
+SUBSECTION::Accessor Methods
+
+METHOD:: prefix
+RETURNS:: device prefix
+
+METHOD:: dvcnum
+RETURNS:: index of device in device list
+
+METHOD:: rot
+RETURNS:: rotation of device (cable orientation): 0, 90, 180, 270
+
+METHOD:: rws
+returns:: number of rows a grid device has
+
+METHOD:: cls
+RETURNS:: number of columns
+
+METHOD:: prt
+RETURNS:: port the device is currently communicating on
+
+METHOD:: deviceList
+sends message to serialosc to report what devices are connected
+
+FOOTNOTE::
+Some content taken verbatim from http://monome.org/docs/tech
+::
