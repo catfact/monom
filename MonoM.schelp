@@ -281,10 +281,10 @@ ARGUMENT:: devicenum
 device list index, begins at 0
 
 METHOD:: tiltnoff
-set active state of tilt sensor n to s
+set active state of tilt sensor on (device) n to (state) s
 
 ARGUMENT:: sens
-(describe argument here)
+nth device: to receive tilt for
 
 ARGUMENT:: noff
 0 or 1
