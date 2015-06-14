@@ -316,5 +316,5 @@ METHOD:: deviceList
 sends message to serialosc to report what devices are connected
 
 FOOTNOTE::
-Some content taken verbatim from http://monome.org/docs/tech
+Some content taken verbatim from http://monome.org/docs/osc
 ::
