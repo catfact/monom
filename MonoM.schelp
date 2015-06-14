@@ -4,7 +4,7 @@ categories:: Monome
 related:: Classes/Arc, Classes/ArcEncoder, Classes/ArcRotary
 
 DESCRIPTION::
-Communication and management for monome serial/OSC grid controllers. For more information on monome see http://monome.org. For details on the serialosc protocol used with grid devices see http://monome.org/docs/tech:osc.
+Communication and management for monome serial/OSC grid controllers. For more information on monome see http://monome.org. For details on the serialosc protocol used with grid devices see http://monome.org/docs/osc/.
 
 NOTE:: January 2011 devices only support four intensity levels (off + 3 brightness levels). The value passed in methods prefixed "lev" will be “rounded down” to the lowest available intensity as below:
 

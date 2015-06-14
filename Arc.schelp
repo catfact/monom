@@ -4,7 +4,7 @@ categories:: Monome
 related:: Classes/ArcRotary, Classes/ArcEncoder, Classes/MonoM
 
 DESCRIPTION::
-Communication and management for monome serial/OSC arc controllers. For more information on monome see http://monome.org. For details on the serialosc protocol used with arc devices see http://monome.org/docs/tech:osc.
+Communication and management for monome serial/OSC arc controllers. For more information on monome see http://monome.org. For details on the serialosc protocol used with arc devices see http://monome.org/docs/osc/.
 
 CLASSMETHODS::
 
